@@ -18,13 +18,22 @@ app.get("/", function (req, res) {
   res.sendFile(__dirname + '/views/index.html');
 });
 
-
-// your first API endpoint... 
-app.get("/api/hello", function (req, res) {
-  res.json({greeting: 'hello API'});
+app.get("/api", function (req, res) {
+    var date = new Date();
+    res.json({unix: date.getTime(), utc: date.toGMTString()});
 });
 
-
+app.get("/api/:date/", function(req, res) {
+    var date_string = req.params.date;
+    var date;
+    if (/^[0-9]*$/.test(date_string)) {
+        date = new Date(parseInt(date_string));
+    } else {
+        date = new Date(date_string);
+    }
+    if (isNaN(date)) res.json({error: "Invalid Date"});
+    res.json({unix: date.getTime(), utc: date.toGMTString()});
+});
 
 // listen for requests :)
 var listener = app.listen(process.env.PORT, function () {
